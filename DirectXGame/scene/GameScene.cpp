@@ -11,9 +11,26 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
+	//テクスチャ読み込み
+	textureHandle_ = TextureManager::Load("space_cat.png");
+
+	//3Dモデルの生成と解放
+	model_ = Model::Create();
+
+	//ビュープロジェクションの初期化
+	viewProjection_.Initialize();
+
+	//自キャラの生成
+	player_ = new Player();
+	//自キャラの初期化
+	player_->Initialize(model_,textureHandle_);
+	
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+	player_->Update();
+}
 
 void GameScene::Draw() {
 
@@ -42,6 +59,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	player_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -53,7 +71,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
