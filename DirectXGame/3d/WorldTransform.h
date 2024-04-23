@@ -46,6 +46,8 @@ public:
 	/// 行列を転送する
 	/// </summary>
 	void TransferMatrix();
+
+	void UpdateMatrix();
 	/// <summary>
 	/// 定数バッファの取得
 	/// </summary>
@@ -60,6 +62,9 @@ private:
 	// コピー禁止
 	WorldTransform(const WorldTransform&) = delete;
 	WorldTransform& operator=(const WorldTransform&) = delete;
+
+	private:
+
 };
 
 static_assert(!std::is_copy_assignable_v<WorldTransform>);
