@@ -163,7 +163,10 @@ Matrix4x4 MakeRotateZMatrix(const Vector3& rotate) {
 
 	return result;
 }
-//--------------------------------------------------
+
+//TransformNormal-----------------------------------
+Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m);
+    //--------------------------------------------------
 
 void Player::Update() { //------------------------------------------------
 	worldTransform_.TransferMatrix();
@@ -246,16 +249,20 @@ void Player::Update() { //------------------------------------------------
 void Player::Attack() {
 	if (input_->PushKey(DIK_W)) {
 
-		//if (bullet_) {
-		//	delete bullet_;
-		//	bullet_ = nullptr;
-		//}
+		//弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+		//速度のベクトルを自機の向きに合わせて回転させる
+		//velocity = TransformNomal(velocity,)
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
 
 		bullets_.push_back(newBullet);
 	}
 }
+
+
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
