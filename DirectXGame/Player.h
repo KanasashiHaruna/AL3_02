@@ -3,6 +3,7 @@
 #include "WorldTransform.h"
 #include "Input.h"
 #include "PlayerBullet.h"
+#include <list>
 
 class Player {
 public:
@@ -11,6 +12,9 @@ public:
 	void Draw(ViewProjection& vewProjection);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	void Attack();
+
+	//デストラクタ
+	~Player();
 
 private:
 	// ワールド変換データ
@@ -24,5 +28,6 @@ private:
 	Input* input_ = nullptr;
 
 	// 弾
-	PlayerBullet* bullet_ = nullptr;
+	//PlayerBullet* bullet_ = nullptr;
+	std::list<PlayerBullet*> bullets_;
 };
