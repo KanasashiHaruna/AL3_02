@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include "AxisIndicator.h"
+#include "Enemy.h"
 
 GameScene::GameScene() {}
 
@@ -27,6 +28,10 @@ void GameScene::Initialize() {
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
 
+
+	//敵キャラの生成
+	enemy_ = new Enemy();
+	enemy_->Initialize(model_, position_, velocity_);
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
@@ -36,6 +41,7 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	player_->Update();
+	enemy_->Update();
 
 /// デバッグカメラの処理
 #ifdef _DEBUG
@@ -82,6 +88,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
