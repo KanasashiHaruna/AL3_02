@@ -165,10 +165,28 @@ Matrix4x4 MakeRotateZMatrix(const Vector3& rotate) {
 }
 
 //TransformNormal-----------------------------------
-Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m);
+Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m) {
+	Vector3 result{
+	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
+	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
+	    v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2]
+	};
+
+	return result;
+}
     //--------------------------------------------------
 
 void Player::Update() { //------------------------------------------------
+
+	bullets_.remove_if([](PlayerBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+
+		return false;
+	});
+
 	worldTransform_.TransferMatrix();
 
 	// キャラクターの移動ベクトル
@@ -244,6 +262,8 @@ void Player::Update() { //------------------------------------------------
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();
 	}
+
+	
 }
 
 void Player::Attack() {
@@ -254,7 +274,8 @@ void Player::Attack() {
 		Vector3 velocity(0, 0, kBulletSpeed);
 
 		//速度のベクトルを自機の向きに合わせて回転させる
-		//velocity = TransformNomal(velocity,)
+		velocity = TransformNomal(velocity, worldTransform_.matWorld_);
+
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
 
