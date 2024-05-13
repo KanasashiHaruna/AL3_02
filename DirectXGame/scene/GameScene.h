@@ -54,6 +54,8 @@ private: // メンバ変数
 	Vector3 position_ = {0, 0, 10};
 	Vector3 velocity_ = {0, 0, -0.1f};
 
+	Vector3 velocity2_ = {-0.2f, 0.2f, -0.2f};
+
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
