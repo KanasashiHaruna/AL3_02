@@ -32,6 +32,9 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	Fire();
 	Approach();
 
+	
+	
+
 }
 
 
@@ -88,11 +91,13 @@ void Enemy::Update() {
 }
 
 void Enemy::Fire() {
+	assert(player_);
 
 	// 弾の速度
 	const float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
+	player_
 	// 速度のベクトルを自機の向きに合わせて回転させる
 	velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
 
@@ -101,9 +106,20 @@ void Enemy::Fire() {
 
 	bullets_.push_back(newBullet);
 
+	
+
+
 }
 
+Vector3 Enemy::GetWorldPosition() { 
+	Vector3 worldPos;
 
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 

@@ -5,6 +5,9 @@
 #include "EnemyBullet.h"
 #include <list>
 
+class Player;
+	
+
 class Enemy {
 public:
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity, const Vector3& leaveVelocity);
@@ -12,10 +15,13 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	void Fire();
 	void Approach();
+	void SetPlayer(Player* player) { player_ = player; }
+	Vector3 GetWorldPosition();
 
 
 	~Enemy();
 
+	Player* player_ = nullptr;
 	
 	// ワールド変換データ
 	WorldTransform worldTransform_;

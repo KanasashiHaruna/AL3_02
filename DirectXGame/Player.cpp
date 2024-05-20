@@ -176,6 +176,7 @@ Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m) {
 }
     //--------------------------------------------------
 
+
 void Player::Update() { //------------------------------------------------
 
 	bullets_.remove_if([](PlayerBullet* bullet) {
@@ -264,6 +265,16 @@ void Player::Update() { //------------------------------------------------
 	}
 
 	
+}
+
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }
 
 void Player::Attack() {

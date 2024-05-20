@@ -12,6 +12,7 @@ public:
 	void Draw(ViewProjection& vewProjection);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	void Attack();
+	Vector3 GetWorldPosition();
 
 	//デストラクタ
 	~Player();
