@@ -20,7 +20,7 @@ private:
 	// 速度
 	Vector3 velocity_;
 
-	static const int32_t kLifeTime = 60;
+	static const int32_t kLifeTime = 360;
 
 	// デスタイマー
 	int32_t deathTimer_ = kLifeTime;

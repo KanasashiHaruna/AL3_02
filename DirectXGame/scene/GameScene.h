@@ -51,7 +51,7 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
 
-	Vector3 position_ = {0, 0, 10};
+	Vector3 position_ = {10, 0, 10};
 	Vector3 velocity_ = {0, 0, -0.1f};
 
 	Vector3 velocity2_ = {-0.2f, 0.2f, -0.2f};

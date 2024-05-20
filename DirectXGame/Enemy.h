@@ -11,6 +11,10 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void Fire();
+	void Approach();
+
+
+	~Enemy();
 
 	
 	// ワールド変換データ
@@ -34,6 +38,11 @@ public:
 	Phase phase_ = Phase::Approach;
 	
 	//弾
-	std::list<EnemyBullet*> bullet_;
+	std::list<EnemyBullet*> bullets_;
 	
+	public:
+	static const int kFireInterval = 60;
+
+	private:
+	int32_t fireTimer = 0;
 };
