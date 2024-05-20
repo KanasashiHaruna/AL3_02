@@ -2,12 +2,15 @@
 #include "model.h"
 #include "WorldTransform.h"
 #include "Input.h"
+#include "EnemyBullet.h"
+#include <list>
 
 class Enemy {
 public:
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity, const Vector3& leaveVelocity);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
+	void Fire();
 
 	
 	// ワールド変換データ
@@ -30,5 +33,7 @@ public:
 
 	Phase phase_ = Phase::Approach;
 	
+	//弾
+	std::list<EnemyBullet*> bullet_;
 	
 };
