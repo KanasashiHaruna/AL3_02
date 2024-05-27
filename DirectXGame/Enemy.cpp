@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "WorldTransform.h"
 #include "ImGuiManager.h"
+#include "Player.h"
+#include "mathFunction.h"
 
 // TransformNormal-----------------------------------
 Vector3 TransformNomal2(const Vector3& v, const Matrix4x4& m) {
@@ -15,9 +17,25 @@ Vector3 TransformNomal2(const Vector3& v, const Matrix4x4& m) {
 }
 void Enemy::Approach() { fireTimer = 60; }
 
+// 正規化Normalize---------------
+Vector3 Normalize(const Vector3& v) {
+	float answer = sqrtf((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+
+	Vector3 result;
+	result = {v.x / answer, v.y / answer, v.z / answer};
+	return result;
+}
+// 減算Subtract--------------------
+Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result = {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
+	return result;
+}
+
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity, const Vector3& leaveVelocity) {
 	assert(model);
 	model_ = model;
+	
 
 	// テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("UFO.png");
@@ -31,10 +49,6 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 	Fire();
 	Approach();
-
-	
-	
-
 }
 
 
@@ -94,20 +108,26 @@ void Enemy::Fire() {
 	assert(player_);
 
 	// 弾の速度
-	const float kBulletSpeed = 0.5f;
+	float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
-	player_
+	Vector3 distance = Subtract(player_->GetWorldPosition(), GetWorldPosition());
+	Vector3 distanceNolm = Normalize(distance);
+	velocity = Multiply(kBulletSpeed, distanceNolm);
 	// 速度のベクトルを自機の向きに合わせて回転させる
 	velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
+
+	//GetWorldPosition();
+	//player_->GetWorldPosition();
+
+
+	
+
 
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 	bullets_.push_back(newBullet);
-
-	
-
 
 }
 

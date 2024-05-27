@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "EnemyBullet.h"
 #include <list>
+#include "mathFunction.h"
 
 class Player;
 	
@@ -15,14 +16,14 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	void Fire();
 	void Approach();
-	void SetPlayer(Player* player) { player_ = player; }
+	
 	Vector3 GetWorldPosition();
 
 
 	~Enemy();
 
 	Player* player_ = nullptr;
-	
+	void SetPlayer(Player* player) { player_ = player; }
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 

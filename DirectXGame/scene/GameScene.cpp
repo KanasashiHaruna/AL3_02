@@ -31,6 +31,8 @@ void GameScene::Initialize() {
 
 	//敵キャラの生成
 	enemy_ = new Enemy();
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
 	enemy_->Initialize(model_, position_, velocity_,velocity2_);
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -38,8 +40,7 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	// 敵キャラに自キャラのアドレスを渡す
-	enemy_->SetPlayer(player_);
+	
 }
 
 void GameScene::Update() {
