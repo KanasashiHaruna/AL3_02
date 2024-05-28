@@ -13,6 +13,7 @@ public:
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	void Attack();
 	Vector3 GetWorldPosition();
+	void OnCollision();   //当たり判定
 
 	//デストラクタ
 	~Player();
@@ -31,4 +32,8 @@ private:
 	// 弾
 	//PlayerBullet* bullet_ = nullptr;
 	std::list<PlayerBullet*> bullets_;
+
+	public:
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+	
 };

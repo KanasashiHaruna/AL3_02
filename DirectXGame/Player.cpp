@@ -306,8 +306,12 @@ void Player::Draw(ViewProjection& viewProjection) {
 	}
 }
 
+void Player::OnCollision() {
 
-Player::~Player() { 
+}
+
+
+	Player::~Player() { 
 	
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet; 

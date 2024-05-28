@@ -41,6 +41,7 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+	void CheckAllCollisions();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -50,6 +51,8 @@ private: // メンバ変数
 	// プレイヤー
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
+	float playerRadius_ = 2.0f;
+	float enemyRadius_ = 2.0f;
 
 	Vector3 position_ = {10, 0, 10};
 	Vector3 velocity_ = {0, 0, -0.1f};

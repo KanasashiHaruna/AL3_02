@@ -18,7 +18,7 @@ public:
 	void Approach();
 	
 	Vector3 GetWorldPosition();
-
+	void OnCollision();  //当たり判定
 
 	~Enemy();
 
@@ -52,4 +52,8 @@ public:
 
 	private:
 	int32_t fireTimer = 0;
+
+	public:
+	    const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	    
 };

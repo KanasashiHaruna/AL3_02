@@ -8,6 +8,8 @@ public:
 	void Initialize(Model* model, const Vector3& position,const Vector3& velocity);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
+	void OnCollision(); //当たり判定
+	Vector3 GetWorldPosition();
 
 private:
 	// ワールド変換データ

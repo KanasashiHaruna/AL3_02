@@ -18,6 +18,15 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	velocity_ = velocity;
 }
 
+Vector3 PlayerBullet::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
 void PlayerBullet::Update() { 
 	
 	worldTransform_.translation_.x += velocity_.x;
@@ -30,6 +39,8 @@ void PlayerBullet::Update() {
 		isDead_ = true;
 	}
 }
+
+void PlayerBullet::OnCollision() { isDead_ = true; }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);

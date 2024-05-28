@@ -47,7 +47,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	ApprochVelocity_ = velocity;
 	LeaveVelocity_ = leaveVelocity;
 
-	Fire();
+	//Fire();
 	Approach();
 }
 
@@ -108,8 +108,11 @@ void Enemy::Fire() {
 	assert(player_);
 
 	// 弾の速度
-	float kBulletSpeed = 0.5f;
+	float kBulletSpeed = 0.1f;
 	Vector3 velocity(0, 0, kBulletSpeed);
+
+	Vector3 p = player_->GetWorldPosition();
+	Vector3 e = GetWorldPosition();
 
 	Vector3 distance = Subtract(player_->GetWorldPosition(), GetWorldPosition());
 	Vector3 distanceNolm = Normalize(distance);
@@ -147,6 +150,9 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 		    bullet->Draw(viewProjection);
 	}
 }
+
+void Enemy::OnCollision() {}
+
 
 Enemy::~Enemy() {
 

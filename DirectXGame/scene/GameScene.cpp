@@ -8,6 +8,8 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() {}
 
+
+
 void GameScene::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -62,7 +64,12 @@ void GameScene::Update() {
 	} else {
 		viewProjection_.UpdateMatrix();
 	}
+
+
+	CheckAllCollisions();
 }
+
+
 
 void GameScene::Draw() {
 
@@ -108,5 +115,54 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
+#pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	Vector3 posA, posB;
+
+	// 自弾リストの取得
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	// 敵弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+
+#pragma region  自キャラと敵の弾の当たり判定
+
+//自キャラの座標
+	posA = player_->GetWorldPosition();
+
+	//自キャラと敵弾すべての当たり判定
+	for (EnemyBullet* bullet : enemyBullets) {
+		posB = bullet->GetWorldPosition();
+
+		if (posB.z <= 0.0f) {
+			static int a = 0;
+			a++;
+		}
+
+		float Length = ((posB.x - posA.x) * (posB.x - posA.x)) +
+		               ((posB.y - posA.y) * (posB.y - posA.y)) +
+		               ((posB.z - posA.z) * (posB.z - posA.z));
+
+		float radius = (playerRadius_ + enemyRadius_) * (playerRadius_ + enemyRadius_);
+		if (Length <= radius) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+		
+	}
+#pragma endregion
+
+#pragma region　　自弾と敵弾の当たり判定
+
+	Vector3 posC;
+	for (EnemyBullet* bullet : enemyBullets) {
+		for (PlayerBullet* playerBullet : playerBullets) {
+		posC
+		}
+	}
+#pragma endregion
+
+#pragma region
 #pragma endregion
 }
