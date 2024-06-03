@@ -21,6 +21,7 @@ void GameScene::Initialize() {
 
 	// 3Dモデルの生成と解放
 	model_ = Model::Create();
+	
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -29,6 +30,12 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+
+	//skydome
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	
+	skydome_ = new Skydome();
+	skydome_->Initialize(modelSkydome_,textureHandle_);
 
 
 	//敵キャラの生成
@@ -42,7 +49,9 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	
+	//ビュープロジェクションの初期化
+	viewProjection_.farZ = 2000;
+	viewProjection_.Initialize();
 }
 
 void GameScene::Update() {
@@ -98,6 +107,7 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	skydome_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
@@ -119,14 +129,14 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollisions() {
-	Vector3 posA, posB;
+	Vector3 posA, posB,posC,posD;
 
 	// 自弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 	// 敵弾リストの取得
 	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
 
-#pragma region  自キャラと敵の弾の当たり判定
+#pragma region  
 
 //自キャラの座標
 	posA = player_->GetWorldPosition();
@@ -135,10 +145,10 @@ void GameScene::CheckAllCollisions() {
 	for (EnemyBullet* bullet : enemyBullets) {
 		posB = bullet->GetWorldPosition();
 
-		if (posB.z <= 0.0f) {
-			static int a = 0;
-			a++;
-		}
+		//if (posB.z <= 0.0f) {
+		//	static int a = 0;
+		//	a++;
+		//}
 
 		float Length = ((posB.x - posA.x) * (posB.x - posA.x)) +
 		               ((posB.y - posA.y) * (posB.y - posA.y)) +
@@ -153,16 +163,43 @@ void GameScene::CheckAllCollisions() {
 	}
 #pragma endregion
 
-#pragma region　　自弾と敵弾の当たり判定
-
-	Vector3 posC;
+//#pragma region 　	
+	//敵弾と自弾
 	for (EnemyBullet* bullet : enemyBullets) {
 		for (PlayerBullet* playerBullet : playerBullets) {
-		posC
+			posC = playerBullet->GetWorldPosition();
+			posB = bullet->GetWorldPosition();
+
+			
+			float Length = ((posB.x - posC.x) * (posB.x - posC.x)) +
+			               ((posB.y - posC.y) * (posB.y - posC.y)) +
+			               ((posB.z - posC.z) * (posB.z - posC.z));
+
+			float radius = (playerRadius_ + enemyRadius_) * (playerRadius_ + enemyRadius_);
+			if (Length <= radius) {
+				playerBullet->OnCollision();
+				bullet->OnCollision();
+			}
+
 		}
 	}
 #pragma endregion
 
 #pragma region
+	//自弾と敵キャラ
+	posD = enemy_->GetWorldPosition();
+	for (PlayerBullet* playerBullet : playerBullets) {
+		posC = playerBullet->GetWorldPosition();
+
+		float Length = ((posC.x - posD.x) * (posC.x - posD.x)) +
+		               ((posC.y - posD.y) * (posC.y - posD.y)) +
+		               ((posC.z - posD.z) * (posC.z - posD.z));
+
+		float radius = (playerRadius_ + enemyRadius_) * (playerRadius_ + enemyRadius_);
+		if (Length <= radius) {
+			playerBullet->OnCollision();
+			enemy_->OnCollision();
+		}
+	}
 #pragma endregion
 }

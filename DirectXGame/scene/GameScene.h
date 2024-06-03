@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "DebugCamera.h"
 #include "Enemy.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -59,8 +60,15 @@ private: // メンバ変数
 
 	Vector3 velocity2_ = {-0.2f, 0.2f, -0.2f};
 
+
+	//Skydome
+	Skydome* skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
+	
+
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+	
 
 	// スプライト
 	Model* model_ = nullptr;
@@ -71,6 +79,8 @@ private: // メンバ変数
 	// デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 	bool debaugflug_ = false;
+
+	
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
