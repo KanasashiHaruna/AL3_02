@@ -7,13 +7,15 @@
 
 class Player {
 public:
-	void Initialize(Model* model, uint32_t textureJandle);
+	void Initialize(Model* model, uint32_t textureJandle, Vector3& position);
 	void Update();
 	void Draw(ViewProjection& vewProjection);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	void Attack();
 	Vector3 GetWorldPosition();
 	void OnCollision();   //当たり判定
+
+	void SetParent(const WorldTransform* parent);
 
 	//デストラクタ
 	~Player();

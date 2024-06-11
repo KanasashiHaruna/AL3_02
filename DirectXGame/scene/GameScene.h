@@ -11,6 +11,7 @@
 #include "DebugCamera.h"
 #include "Enemy.h"
 #include "Skydome.h"
+#include "RaikCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -55,6 +56,7 @@ private: // メンバ変数
 	float playerRadius_ = 2.0f;
 	float enemyRadius_ = 2.0f;
 
+	Vector3 playerPosition = {0.0f, 0.0f, -10.0f};
 	Vector3 position_ = {10, 0, 10};
 	Vector3 velocity_ = {0, 0, -0.1f};
 
@@ -80,7 +82,10 @@ private: // メンバ変数
 	DebugCamera* debugCamera_ = nullptr;
 	bool debaugflug_ = false;
 
-	
+	//レールカメラ
+	RaikCamera* railCamera_ = nullptr;
+	Vector3 railCameraPosition = {0, 0, -100};
+	Vector3 railCameraRotate = {0, 0, 0};
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

@@ -29,7 +29,11 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_,textureHandle_,playerPosition);
+	
+
+	Vector3 playerposition(0, 0, 50);
+	player_->Initialize(model_, textureHandle_, playerposition);
 
 	//skydome
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -49,10 +53,17 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
+	// レールカメラ
+	railCamera_ = new RaikCamera();
+	railCamera_->Initialize(railCameraPosition, railCameraRotate);
+	// ワールドトランスフォームの初期設定
+
+
 	//ビュープロジェクションの初期化
-	viewProjection_.farZ = 2000;
-	viewProjection_.Initialize();
+	viewProjection_.Initialize();	
+	player_->SetParent(&railCamera_->GetWorldPosition());
 }
+
 
 void GameScene::Update() {
 	player_->Update();
@@ -69,11 +80,18 @@ void GameScene::Update() {
 		debugCamera_->Update();
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+
 		viewProjection_.TransferMatrix();
 	} else {
-		viewProjection_.UpdateMatrix();
+
+		railCamera_->Update();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+
+		viewProjection_.TransferMatrix();
 	}
 
+	
 
 	CheckAllCollisions();
 }

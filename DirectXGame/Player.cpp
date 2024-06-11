@@ -1,12 +1,16 @@
 ﻿#include "Player.h"
 #include "cassert"
 #include "ImGuiManager.h"
+#include "WorldTransform.h"
+#include "MathFunction.h"
 
-void Player::Initialize(Model* model, uint32_t textureJandle) {
+void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureJandle;
+	worldTransform_.translation_ = position;
 	worldTransform_.Initialize();
+
 
 	input_ = Input::GetInstance();
 }
@@ -176,6 +180,9 @@ Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m) {
 }
     //--------------------------------------------------
 
+void Player::SetParent(const WorldTransform* parent) {
+	worldTransform_.parent_=parent;
+}
 
 void Player::Update() { //------------------------------------------------
 
@@ -264,15 +271,17 @@ void Player::Update() { //------------------------------------------------
 		bullet->Update();
 	}
 
-	
+	worldTransform_.UpdateMatrix();
 }
 
 Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos;
+	Matrix4x4 matrix;
+	matrix = MultiplyEx(worldTransform_.matWorld_, worldTransform_.parent_->matWorld_);
 
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1];
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	worldPos.x = matrix.m[3][0];
+	worldPos.y = matrix.m[3][1];
+	worldPos.z = matrix.m[3][2];
 
 	return worldPos;
 }
@@ -288,7 +297,7 @@ void Player::Attack() {
 		velocity = TransformNomal(velocity, worldTransform_.matWorld_);
 
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity);
 
 		bullets_.push_back(newBullet);
 	}
