@@ -28,6 +28,7 @@ public:
 
 	GameScene* gameScene_ = nullptr;
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+	
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 
@@ -60,5 +61,10 @@ public:
 	public:
 	    //const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 	    
+		// デスフラグ
+	    bool isDead_ = false;
+
+	public:
+	    bool IsDead() const { return isDead_; }
 };
 

@@ -128,10 +128,6 @@ void Enemy::Fire() {
 	//GetWorldPosition();
 	//player_->GetWorldPosition();
 
-
-	
-
-
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 	gameScene_->AddEnemyBullet(newBullet);
@@ -157,7 +153,7 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 	//}
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() { isDead_ = true; }
 
 
 Enemy::~Enemy() {

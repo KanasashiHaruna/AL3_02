@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "RaikCamera.h"
+#include "sstream"
 
 
 /// <summary>
@@ -44,10 +45,26 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	/// <summary>
+	///敵発生データの読み込み
+	/// </summary>
+	void loadEnemyPopDate();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+	///敵を発生させる関数
+	void EnemyOccurrence(Vector3 position);
+
 	void CheckAllCollisions();
 
 	//敵の弾を追加する
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	//敵を追加する
+	void AddEnemy(Enemy* enemy);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -57,7 +74,8 @@ private: // メンバ変数
 
 	// プレイヤー
 	Player* player_ = nullptr;
-	Enemy* enemy_ = nullptr;
+	//Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemys_;
 	float playerRadius_ = 2.0f;
 
 
@@ -70,6 +88,11 @@ private: // メンバ変数
 	std::list<EnemyBullet*> enemyBullets_;
 	const std::list<EnemyBullet*>& GetBullets() const { return enemyBullets_; }
 	float enemyRadius_ = 2.0f;
+
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
+	bool isWait = false;
+	uint32_t waitTimer = 0;
 
 	//Skydome
 	Skydome* skydome_ = nullptr;
