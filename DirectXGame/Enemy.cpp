@@ -5,6 +5,7 @@
 #include "ImGuiManager.h"
 #include "Player.h"
 #include "mathFunction.h"
+#include "GameScene.h"
 
 // TransformNormal-----------------------------------
 Vector3 TransformNomal2(const Vector3& v, const Matrix4x4& m) {
@@ -47,6 +48,9 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	ApprochVelocity_ = velocity;
 	LeaveVelocity_ = leaveVelocity;
 
+	//EnemyBullet* newBullet = new EnemyBullet();
+	//newBullet->Initialize(model, position, velocity);
+	
 	//Fire();
 	Approach();
 }
@@ -54,14 +58,14 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 void Enemy::Update() {
 
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-
-		return false;
-	});
+	//bullets_.remove_if([](EnemyBullet* bullet) {
+	//	if (bullet->IsDead()) {
+	//		delete bullet;
+	//		return true;
+	//	}
+	//
+	//	return false;
+	//});
 	//------------------------------------------------
 	switch (phase_) { 
 		case Phase::Approach:
@@ -92,9 +96,10 @@ void Enemy::Update() {
 	worldTransform_.UpdateMatrix();
 	//Fire();
 
-	for (EnemyBullet* bullet : bullets_) {
-		    bullet->Update();
-	}
+	//for (EnemyBullet* bullet : bullets_) {
+	//	    bullet->Update();
+	//
+	//}
 	// 座標の画面表示-------------------
 
 	ImGui::Begin("Enemy");
@@ -108,7 +113,7 @@ void Enemy::Fire() {
 	assert(player_);
 
 	// 弾の速度
-	float kBulletSpeed = 0.1f;
+	float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
 	Vector3 p = player_->GetWorldPosition();
@@ -118,7 +123,7 @@ void Enemy::Fire() {
 	Vector3 distanceNolm = Normalize(distance);
 	velocity = Multiply(kBulletSpeed, distanceNolm);
 	// 速度のベクトルを自機の向きに合わせて回転させる
-	velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
+	//velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
 
 	//GetWorldPosition();
 	//player_->GetWorldPosition();
@@ -129,8 +134,9 @@ void Enemy::Fire() {
 
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	gameScene_->AddEnemyBullet(newBullet);
 
-	bullets_.push_back(newBullet);
+	//bullets_.push_back(newBullet);
 
 }
 
@@ -146,9 +152,9 @@ Vector3 Enemy::GetWorldPosition() {
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
-	for (EnemyBullet* bullet : bullets_) {
-		    bullet->Draw(viewProjection);
-	}
+	//for (EnemyBullet* bullet : bullets_) {
+	//	    bullet->Draw(viewProjection);
+	//}
 }
 
 void Enemy::OnCollision() {}
@@ -156,7 +162,7 @@ void Enemy::OnCollision() {}
 
 Enemy::~Enemy() {
 
-	for (EnemyBullet* bullet : bullets_) {
-		    delete bullet;
-	}
+	//for (EnemyBullet* bullet : bullets_) {
+	//	    delete bullet;
+	//}
 }

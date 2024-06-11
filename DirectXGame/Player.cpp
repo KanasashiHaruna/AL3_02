@@ -220,18 +220,18 @@ void Player::Update() { //------------------------------------------------
 	// 座標移動(ベクトルの加算)
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 
-	// ワールド行列の更新
-	Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_); /// スケーリング行列の作成
-	Matrix4x4 rotateMatrixX = MakeRotateXMatrix(worldTransform_.rotation_);
-	Matrix4x4 rotateMatrixY = MakeRotateYMatrix(worldTransform_.rotation_);
-	Matrix4x4 rotateMatrixZ = MakeRotateXMatrix(worldTransform_.rotation_); /// 回転行列
-	Matrix4x4 rotateMatrixXYZ =
-	    Multiply(rotateMatrixX, Multiply(rotateMatrixY, rotateMatrixZ)); // 回転行列の合成
-	Matrix4x4 translateMatrix = MakeTranslateMAtrix(worldTransform_.translation_); // 平行移動行列
+	//// ワールド行列の更新
+	//Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_); /// スケーリング行列の作成
+	//Matrix4x4 rotateMatrixX = MakeRotateXMatrix(worldTransform_.rotation_);
+	//Matrix4x4 rotateMatrixY = MakeRotateYMatrix(worldTransform_.rotation_);
+	//Matrix4x4 rotateMatrixZ = MakeRotateXMatrix(worldTransform_.rotation_); /// 回転行列
+	//Matrix4x4 rotateMatrixXYZ =
+	//    Multiply(rotateMatrixX, Multiply(rotateMatrixY, rotateMatrixZ)); // 回転行列の合成
+	//Matrix4x4 translateMatrix = MakeTranslateMAtrix(worldTransform_.translation_); // 平行移動行列
 
-	worldTransform_.matWorld_ = Multiply(scaleMatrix, Multiply(rotateMatrixXYZ, translateMatrix));
+	//worldTransform_.matWorld_ = Multiply(scaleMatrix, Multiply(rotateMatrixXYZ, translateMatrix));
 
-	worldTransform_.TransferMatrix();
+	//worldTransform_.TransferMatrix();
 
 	// 座標の画面表示-------------------
 
@@ -277,7 +277,7 @@ void Player::Update() { //------------------------------------------------
 Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos;
 	Matrix4x4 matrix;
-	matrix = MultiplyEx(worldTransform_.matWorld_, worldTransform_.parent_->matWorld_);
+	matrix = worldTransform_.matWorld_;
 
 	worldPos.x = matrix.m[3][0];
 	worldPos.y = matrix.m[3][1];
@@ -305,7 +305,8 @@ void Player::Attack() {
 
 
 void Player::Draw(ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	//model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	model_->Draw(worldTransform_, viewProjection);
 
 	//if (bullet_) {
 	//	bullet_->Draw(viewProjection);

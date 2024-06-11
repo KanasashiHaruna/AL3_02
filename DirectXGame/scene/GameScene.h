@@ -13,6 +13,7 @@
 #include "Skydome.h"
 #include "RaikCamera.h"
 
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -45,16 +46,20 @@ public: // メンバ関数
 	void Draw();
 	void CheckAllCollisions();
 
+	//敵の弾を追加する
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 
+
 	// プレイヤー
 	Player* player_ = nullptr;
 	Enemy* enemy_ = nullptr;
 	float playerRadius_ = 2.0f;
-	float enemyRadius_ = 2.0f;
+
 
 	Vector3 playerPosition = {0.0f, 0.0f, -10.0f};
 	Vector3 position_ = {10, 0, 10};
@@ -62,6 +67,9 @@ private: // メンバ変数
 
 	Vector3 velocity2_ = {-0.2f, 0.2f, -0.2f};
 
+	std::list<EnemyBullet*> enemyBullets_;
+	const std::list<EnemyBullet*>& GetBullets() const { return enemyBullets_; }
+	float enemyRadius_ = 2.0f;
 
 	//Skydome
 	Skydome* skydome_ = nullptr;

@@ -7,7 +7,7 @@
 #include "mathFunction.h"
 
 class Player;
-	
+class GameScene;
 
 class Enemy {
 public:
@@ -17,6 +17,7 @@ public:
 	void Fire();
 	void Approach();
 	
+	
 	Vector3 GetWorldPosition();
 	void OnCollision();  //当たり判定
 
@@ -24,6 +25,9 @@ public:
 
 	Player* player_ = nullptr;
 	void SetPlayer(Player* player) { player_ = player; }
+
+	GameScene* gameScene_ = nullptr;
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 
@@ -45,7 +49,7 @@ public:
 	Phase phase_ = Phase::Approach;
 	
 	//弾
-	std::list<EnemyBullet*> bullets_;
+	//std::list<EnemyBullet*> bullets_;
 	
 	public:
 	static const int kFireInterval = 60;
@@ -54,6 +58,7 @@ public:
 	int32_t fireTimer = 0;
 
 	public:
-	    const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	    //const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 	    
 };
+
