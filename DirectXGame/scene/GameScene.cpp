@@ -281,7 +281,7 @@ void GameScene::Draw() {
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(commandList);
-
+	player_->DrawUI();
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
@@ -290,6 +290,7 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+	
 }
 
 void GameScene::CheckAllCollisions() {

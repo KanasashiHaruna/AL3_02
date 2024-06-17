@@ -11,10 +11,48 @@ Vector3 Multiply(float scalar, const Vector3& v){
 	return result;
 }
 
+// TransformNormal--------------平行移動だけ無視-------------------
+Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m) {
+	Vector3 result{
+	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
+	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
+	    v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2]};
+
+	return result;
+}
+
+
 // 加算Add-------------------------
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 result;
 	result = {v1.x + v2.x, v1.y + v2.y, v1.z + v2.z};
+	return result;
+}
+
+// 減算Subtract--------------------
+Vector3 Subtract3(const Vector3& v1, const Vector3& v2) {
+	Vector3 result;
+	result = {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
+	return result;
+}
+
+// 行列の減算Subtract
+Matrix4x4 Subtract4(const Matrix4x4& m1, const Matrix4x4& m2) {
+	Matrix4x4 result;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.m[i][j] = m1.m[i][j] - m2.m[i][j];
+		}
+	}
+	return result;
+}
+
+// 正規化Normalize---------------
+Vector3 Normalize1(const Vector3& v) {
+	float answer = sqrtf((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+
+	Vector3 result;
+	result = {v.x / answer, v.y / answer, v.z / answer};
 	return result;
 }
 
@@ -143,6 +181,34 @@ Matrix4x4 MultiplyEx(const Matrix4x4& m1, const Matrix4x4& m2) {
 			}
 		}
 	}
+	return result;
+}
+
+// ビューポート変換行列-----------------------------
+Matrix4x4 MakeViewportMatrix(
+   float VpWidth,float VpHeight,float OffsetX,float OffsetY) {
+	Matrix4x4 result;
+
+	result.m[0][0] = VpWidth / 2;
+	result.m[0][1] = 0.0f;
+	result.m[0][2] = 0.0f;
+	result.m[0][3] = 0.0f;
+
+	result.m[1][0] = 0.0f;
+	result.m[1][1] = -(VpHeight / 2);
+	result.m[1][2] = 0.0f;
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = 0.0f;
+	result.m[2][1] = 0.0f;
+	result.m[2][2] = 1.0f;
+	result.m[2][3] = 0.0f;
+
+	result.m[3][0] = VpWidth + (OffsetX / 2);
+	result.m[3][1] = VpHeight + (OffsetY / 2);
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+
 	return result;
 }
 // 平行移動行列------------------------------------------

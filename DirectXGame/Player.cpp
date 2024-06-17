@@ -3,6 +3,9 @@
 #include "ImGuiManager.h"
 #include "WorldTransform.h"
 #include "MathFunction.h"
+#include "TextureManager.h"
+#include "Sprite.h"
+#include "WinApp.h"
 
 void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) {
 	assert(model);
@@ -11,6 +14,12 @@ void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) 
 	worldTransform_.translation_ = position;
 	worldTransform_.Initialize();
 
+	//3Dレティクルのワールドトランスフォーム初期化
+	worldTransform3DReticle_.Initialize();
+	//レティクル用テクスチャ
+	uint32_t textureReticle = TextureManager::Load("rethikuru.png");
+	//スプライト
+	sprite2DReticle_ = Sprite::Create(textureReticle,{0});
 
 	input_ = Input::GetInstance();
 }
@@ -168,16 +177,6 @@ Matrix4x4 MakeRotateZMatrix(const Vector3& rotate) {
 	return result;
 }
 
-//TransformNormal-----------------------------------
-Vector3 TransformNomal(const Vector3& v, const Matrix4x4& m) {
-	Vector3 result{
-	    v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],
-	    v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
-	    v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2]
-	};
-
-	return result;
-}
     //--------------------------------------------------
 
 void Player::SetParent(const WorldTransform* parent) {
@@ -186,6 +185,31 @@ void Player::SetParent(const WorldTransform* parent) {
 
 void Player::Update() { //------------------------------------------------
 
+//自機のワールド座標から3Dレティクルのワールド座標を計算
+	//自機から3Dレティクルへの距離
+	const float kDistancePlayerTo3DReticle = 50.0f;
+	//自機から3Dレティクルへのオフセット(ｚ+向き)
+	Vector3 offset = {0, 0, 1.0f};
+	//自機のワールド行列の回転を反映
+	offset = TransformNomal(offset, worldTransform_.matWorld_);
+	//ベクトルの長さを整える
+	offset = Normalize1(offset);
+	offset = Multiply(kDistancePlayerTo3DReticle, offset);
+	//3Dレティクルの座標を設定
+	worldTransform3DReticle_.translation_ = Add(offset, GetWorldPosition());
+	worldTransform3DReticle_.UpdateMatrix();
+
+	//--------------------------------------------------------------
+	
+	//3Dレティクルのワールド座標から2Dレティクルのスクリーンを座標計算
+	Vector3 positionReticle = GetWorldPosition1();
+
+	//ビューポート行列
+	Matrix4x4 matViewport =
+	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+	//ビュー行列とプロジェクション行列、ビューポート行列を合成する
+	//Matrix4x4 matViewProjectionViewport = 
 	bullets_.remove_if([](PlayerBullet* bullet) {
 		if (bullet->IsDead()) {
 			delete bullet;
@@ -219,19 +243,6 @@ void Player::Update() { //------------------------------------------------
 
 	// 座標移動(ベクトルの加算)
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
-
-	//// ワールド行列の更新
-	//Matrix4x4 scaleMatrix = MakeScaleMatrix(worldTransform_.scale_); /// スケーリング行列の作成
-	//Matrix4x4 rotateMatrixX = MakeRotateXMatrix(worldTransform_.rotation_);
-	//Matrix4x4 rotateMatrixY = MakeRotateYMatrix(worldTransform_.rotation_);
-	//Matrix4x4 rotateMatrixZ = MakeRotateXMatrix(worldTransform_.rotation_); /// 回転行列
-	//Matrix4x4 rotateMatrixXYZ =
-	//    Multiply(rotateMatrixX, Multiply(rotateMatrixY, rotateMatrixZ)); // 回転行列の合成
-	//Matrix4x4 translateMatrix = MakeTranslateMAtrix(worldTransform_.translation_); // 平行移動行列
-
-	//worldTransform_.matWorld_ = Multiply(scaleMatrix, Multiply(rotateMatrixXYZ, translateMatrix));
-
-	//worldTransform_.TransferMatrix();
 
 	// 座標の画面表示-------------------
 
@@ -286,12 +297,28 @@ Vector3 Player::GetWorldPosition() {
 	return worldPos;
 }
 
+Vector3 Player::GetWorldPosition1() {
+	Vector3 worldPos;
+	Matrix4x4 matrix;
+	matrix = worldTransform3DReticle_.matWorld_;
+
+	worldPos.x = matrix.m[3][0];
+	worldPos.y = matrix.m[3][1];
+	worldPos.z = matrix.m[3][2];
+
+	return worldPos;
+}
+
 void Player::Attack() {
 	if (input_->PushKey(DIK_W)) {
 
 		//弾の速度
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		//const float kBulletSpeed = 1.0f;
+		Vector3 velocity;
+		// 自機から照準オブジェクトへのベクトル
+		velocity = Subtract3(worldTransform3DReticle_.translation_,GetWorldPosition());
+		velocity = Normalize1(velocity);
+		velocity = Multiply(1.0f, velocity);
 
 		//速度のベクトルを自機の向きに合わせて回転させる
 		velocity = TransformNomal(velocity, worldTransform_.matWorld_);
@@ -305,8 +332,8 @@ void Player::Attack() {
 
 
 void Player::Draw(ViewProjection& viewProjection) {
-	//model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	model_->Draw(worldTransform_, viewProjection);
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	//model_->Draw(worldTransform_, viewProjection);
 
 	//if (bullet_) {
 	//	bullet_->Draw(viewProjection);
@@ -314,7 +341,16 @@ void Player::Draw(ViewProjection& viewProjection) {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
+	model_->Draw(worldTransform3DReticle_, viewProjection);
 }
+
+
+void Player::DrawUI() {
+
+	sprite2DReticle_->Draw();
+
+}
+
 
 void Player::OnCollision() {
 
@@ -322,7 +358,7 @@ void Player::OnCollision() {
 
 
 	Player::~Player() { 
-	
+	delete sprite2DReticle_;
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet; 
 	}
