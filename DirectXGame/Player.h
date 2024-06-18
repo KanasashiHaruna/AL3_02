@@ -6,10 +6,11 @@
 #include <list>
 #include "Sprite.h"
 
+
 class Player {
 public:
 	void Initialize(Model* model, uint32_t textureJandle, Vector3& position);
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 	void Draw(ViewProjection& vewProjection);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	void Attack();
@@ -25,6 +26,8 @@ public:
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+	// ビュープロジェクション
+	//ViewProjection viewProjection_;
 	// モデル
 	Model* model_ = nullptr;
 	// テクスチャハンドル

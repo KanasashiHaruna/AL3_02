@@ -175,7 +175,7 @@ void GameScene::Update() {
 	//loadEnemyPopDate();
 	//UpdateEnemyPopCommands();
 
-	player_->Update();
+	player_->Update(viewProjection_);
 	//enemys_->Update();
 	loadEnemyPopDate();
 	UpdateEnemyPopCommands();

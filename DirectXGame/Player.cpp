@@ -6,6 +6,7 @@
 #include "TextureManager.h"
 #include "Sprite.h"
 #include "WinApp.h"
+#include "ViewProjection.h"
 
 void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) {
 	assert(model);
@@ -19,7 +20,7 @@ void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) 
 	//レティクル用テクスチャ
 	uint32_t textureReticle = TextureManager::Load("rethikuru.png");
 	//スプライト
-	sprite2DReticle_ = Sprite::Create(textureReticle,{0});
+	sprite2DReticle_ = Sprite::Create(textureReticle, {0, 0}, {1, 1, 1, 1}, {0.5f,0.5f});
 
 	input_ = Input::GetInstance();
 }
@@ -183,7 +184,7 @@ void Player::SetParent(const WorldTransform* parent) {
 	worldTransform_.parent_=parent;
 }
 
-void Player::Update() { //------------------------------------------------
+void Player::Update(const ViewProjection& viewProjection) { //------------------------------------------------
 
 //自機のワールド座標から3Dレティクルのワールド座標を計算
 	//自機から3Dレティクルへの距離
@@ -209,7 +210,17 @@ void Player::Update() { //------------------------------------------------
 	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 
 	//ビュー行列とプロジェクション行列、ビューポート行列を合成する
-	//Matrix4x4 matViewProjectionViewport = 
+	Matrix4x4 matViewProjectionViewport =
+	    MultiplyEx(viewProjection.matView, MultiplyEx(viewProjection.matProjection, matViewport));
+	
+
+	//ワールド→スクリーン座標返還(ここから3Dから2Dになる)
+	positionReticle = Transform(positionReticle, matViewProjectionViewport);
+
+	//スプライトのレティクルに座標設定
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+
+
 	bullets_.remove_if([](PlayerBullet* bullet) {
 		if (bullet->IsDead()) {
 			delete bullet;
@@ -341,7 +352,7 @@ void Player::Draw(ViewProjection& viewProjection) {
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
-	model_->Draw(worldTransform3DReticle_, viewProjection);
+	//model_->Draw(worldTransform3DReticle_, viewProjection);
 }
 
 
