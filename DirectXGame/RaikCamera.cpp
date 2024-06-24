@@ -25,8 +25,6 @@ void RaikCamera::Update() {
 
 	worldTransform_.UpdateMatrix();
 
-	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_,worldTransform_.rotation_,worldTransform_.translation_);
-
 	//カメラオブジェクトのワールド行列からビュー行列を計算する
 	viewProjection_.matView = Inverse(worldTransform_.matWorld_);
 
