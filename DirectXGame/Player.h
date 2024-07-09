@@ -13,7 +13,7 @@ public:
 	void Update(const ViewProjection& viewProjection);
 	void Draw(ViewProjection& vewProjection);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
-	void Attack(XINPUT_STATE& joyState);
+	void Attack();
 	Vector3 GetWorldPosition();
 	Vector3 GetWorldPosition1();
 	void OnCollision();   //当たり判定

@@ -226,6 +226,7 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 
 	#pragma region 2D標準
 	//2D標準-----------------------------------------------------------------
+	Vector2 spritePosition = sprite2DReticle_->GetPosition();
 	POINT mousePosition;
 
 	//マウス座標(スクリーン座標)を取得する
@@ -244,8 +245,8 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 	Matrix4x4 matInverseVPV = Inverse(matVPV);
 
 	//スクリーン座標
-	Vector3 posNear = Vector3((float)mousePosition.x, (float)mousePosition.y, 0);
-	Vector3 posFar = Vector3((float)mousePosition.x, (float)mousePosition.y, 1);
+	Vector3 posNear = Vector3((float)spritePosition.x, (float)spritePosition.y, 0);
+	Vector3 posFar = Vector3((float)spritePosition.x, (float)spritePosition.y, 1);
 
 	//スクリーン座標からワールド座標系へ
 	posNear = Transform(posNear, matInverseVPV);
@@ -259,11 +260,18 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 	const float kDistanceTestObject =70.0f;
 	worldTransform3DReticle_.translation_ = Add(posNear, Multiply(kDistanceTestObject, mouseDirection));
 
-	Vector2 spritePosition = sprite2DReticle_->GetPosition();
+	
 	
 	//ゲームパッドの状態を得る変数
 	XINPUT_STATE joyState;
 
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		spritePosition.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
+		spritePosition.x -= (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
+
+		// スプライトの座標変更を反映
+		sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+	}
 	
 	
 	#pragma endregion
@@ -303,9 +311,6 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
 		move.y += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
-		//スプライトの座標変更を反映
-		sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
-
 	}
 
 	//
@@ -342,7 +347,7 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 	} else if (input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y = worldTransform_.rotation_.y + kRotSpeed;
 	}
-	Attack(joyState);
+	Attack();
 
 	
 
@@ -377,7 +382,7 @@ Vector3 Player::GetWorldPosition1() {
 	return worldPos;
 }
 
-void Player::Attack(XINPUT_STATE& joyState) {
+void Player::Attack() {
 	if (input_->PushKey(DIK_W)) {
 
 		//弾の速度
@@ -396,12 +401,13 @@ void Player::Attack(XINPUT_STATE& joyState) {
 
 		bullets_.push_back(newBullet);
 	}
+	XINPUT_STATE joyState;
 	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
 		// return;
 	}
 	// Rトリガーを押していたら
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
-		Attack(joyState);
+		Attack();
 	}
 }
 
