@@ -80,6 +80,7 @@ void GameScene::EnemyOccurrence(Vector3 position) {
 }
 
 void GameScene::loadEnemyPopDate() {
+
 	//ファイルを開く
 	std::ifstream file;
 	file.open("Resources/enemyPop.csv");

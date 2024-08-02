@@ -17,5 +17,5 @@ private:
 	ViewProjection viewProjection_;
 
 	Vector3 velocity_ = {0.0f, 0.0f,0.1f};
-	Vector3 rotationVelocity_ = {0.0f, 0.0f, 0.0f};
+	Vector3 rotationVelocity_ = {0.0f, 0.01f, 0.0f};
 };
