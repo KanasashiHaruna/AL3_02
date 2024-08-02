@@ -8,6 +8,7 @@
 #include "WinApp.h"
 #include "ViewProjection.h"
 
+
 void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) {
 	assert(model);
 	model_ = model;
@@ -25,6 +26,7 @@ void Player::Initialize(Model* model, uint32_t textureJandle,Vector3& position) 
 	input_ = Input::GetInstance();
 }
 
+#pragma region 関数
 Vector3 Player::Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 answer;
 	answer.x = v1.x + v2.x;
@@ -177,7 +179,7 @@ Matrix4x4 MakeRotateZMatrix(const Vector3& rotate) {
 
 	return result;
 }
-
+#pragma endregion
     //--------------------------------------------------
 
 void Player::SetParent(const WorldTransform* parent) {
@@ -285,6 +287,14 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 		return false;
 	});
 
+	boxBullets_.remove_if([](PlayerBox* boxBullets_) { 
+		if (boxBullets_->IsDead()) {
+			delete boxBullets_;
+			return true;
+		
+		}
+		return false;
+	});
 	worldTransform_.TransferMatrix();
 
 	// キャラクターの移動ベクトル
@@ -319,14 +329,14 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 
 	// 座標の画面表示-------------------
 
-	ImGui::Begin("Player");
-	ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
-	ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
-	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
-	ImGui::Text(
-	    "3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
-	    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
-	ImGui::End();
+	//ImGui::Begin("Player");
+	//ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
+	//ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
+	//ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	//ImGui::Text(
+	//    "3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
+	//    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	//ImGui::End();
 
 	// 移動制限------------------------
 	const float kMoveLimitX = 35.0f;
@@ -347,8 +357,17 @@ void Player::Update(const ViewProjection& viewProjection) { //------------------
 	} else if (input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y = worldTransform_.rotation_.y + kRotSpeed;
 	}
-	Attack();
 
+	fireTimer--;
+	//if (fireTimer <= 0) {
+		Attack();
+		BoxAttack();
+		//fireTimer = kFireInterval;
+	//}
+	
+	for (PlayerBox* boxBullet : boxBullets_) {
+		boxBullet->Update();
+	}
 	
 
 	for (PlayerBullet* bullet : bullets_) {
@@ -411,6 +430,17 @@ void Player::Attack() {
 	}
 }
 
+void Player::BoxAttack() {
+	if (input_->PushKey(DIK_Q)) {
+
+	    //弾を生成
+		PlayerBox* newBoxBullet = new PlayerBox();
+		newBoxBullet->Initialize(model_, GetWorldPosition());
+
+		//弾の登録
+		boxBullets_.push_back(newBoxBullet);
+	}
+}
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
@@ -423,6 +453,9 @@ void Player::Draw(ViewProjection& viewProjection) {
 		bullet->Draw(viewProjection);
 	}
 	//model_->Draw(worldTransform3DReticle_, viewProjection);
+	for (PlayerBox* boxBullet : boxBullets_) {
+		boxBullet->Draw(viewProjection);
+	}
 }
 void Player::DrawUI() {
 
@@ -437,4 +470,8 @@ void Player::OnCollision() {
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet; 
 	}
-}
+
+	for (PlayerBox* boxBullet : boxBullets_) {
+		delete boxBullet;
+	}
+    }

@@ -5,8 +5,8 @@
 #include "ImGuiManager.h"
 #include "Player.h"
 #include "mathFunction.h"
-#include "GameScene.h"
 
+#pragma region 関数
 // TransformNormal-----------------------------------
 Vector3 TransformNomal2(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
@@ -16,6 +16,7 @@ Vector3 TransformNomal2(const Vector3& v, const Matrix4x4& m) {
 
 	return result;
 }
+
 void Enemy::Approach() { fireTimer = 60; }
 
 // 正規化Normalize---------------
@@ -33,13 +34,15 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 	return result;
 }
 
+#pragma endregion
+
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity, const Vector3& leaveVelocity) {
 	assert(model);
 	model_ = model;
 	
 
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("UFO.png");
+	textureHandle_ = TextureManager::Load("boss.png");
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -51,88 +54,108 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	//EnemyBullet* newBullet = new EnemyBullet();
 	//newBullet->Initialize(model, position, velocity);
 	
+	worldTransform_.scale_ = {20, 20, 20};
 	//Fire();
 	Approach();
 }
 
+void Enemy::SetParent(const WorldTransform* parent) {
+	worldTransform_.parent_ = parent; 
+}
 
 void Enemy::Update() {
 
-	//bullets_.remove_if([](EnemyBullet* bullet) {
-	//	if (bullet->IsDead()) {
-	//		delete bullet;
-	//		return true;
-	//	}
-	//
-	//	return false;
-	//});
+	bullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+	
+		return false;
+	});
+
 	//------------------------------------------------
 	switch (phase_) { 
-		case Phase::Approach:
+		case Phase::Move:
 	default:
-		  // worldTransform_.translation_.x += ApprochVelocity_.x;
-		  // worldTransform_.translation_.y += ApprochVelocity_.y;
-		  // worldTransform_.translation_.z += ApprochVelocity_.z;
-		    
+		    isStop = false;
+		    worldTransform_.translation_.z += -0.1f;
+	
 
-			if (worldTransform_.translation_.z < 0.0f) {
-			    phase_ = Phase::Leave;
+			//fireTimer--;
+		    //if (fireTimer <= 0) {
+			//    Fire();
+			//    fireTimer = kFireInterval;
+			//}
+		    attackTime++;
+		    if (attackTime >= 150) {
+			    isAction = true;
 			}
 
-			fireTimer--;
-		    if (fireTimer <= 0) {
-			    Fire();
-			    fireTimer = kFireInterval;
+			if (isAction == true) {
+			    phase_ = Phase::Attack;
+			    attackTime = 0;
 			}
+
 		    break;
-	case Phase::Leave:
-		  
-		  worldTransform_.translation_.x += LeaveVelocity_.x;
-		  worldTransform_.translation_.y += LeaveVelocity_.y;
-		  worldTransform_.translation_.z += LeaveVelocity_.z;
-		 
+	case Phase::Attack:
+		    isAction = false;
+		    worldTransform_.translation_.z += LeaveVelocity_.z;
+
+			if (isBoxAttack == true) {
+			    phase_ = Phase::Stop;
+			}
+
+		    break;
+	case Phase::Stop:
+		    isBoxAttack = false;
+		    worldTransform_.translation_.z += 0.2f;
+		    stopTime++;
+
+			if (stopTime >= 150) {
+			    isStop = true;
+			}
+
+			if (isStop == true) {
+			    phase_ = Phase::Move;
+			    stopTime = 0;
+			}
 		    break;
 	}
 	worldTransform_.UpdateMatrix();
-	//Fire();
+	
 
-	//for (EnemyBullet* bullet : bullets_) {
-	//	    bullet->Update();
-	//
-	//}
+	
+
 	// 座標の画面表示-------------------
 
 	ImGui::Begin("Enemy");
 	ImGui::Text(
 	    "Enemy %f %f %f", worldTransform_.translation_.x, worldTransform_.translation_.y,
 	    worldTransform_.translation_.z);
+	ImGui::Text("Enemy Hp: %f", Hp);
+
+	ImGui::Text("Enemy phase:%d", phase_);
+	ImGui::Text("AttackTime: %d", attackTime);
+	ImGui::Text("StopTime: %d", stopTime);
+	
 	ImGui::End();
 }
 
-void Enemy::Fire() {
-	assert(player_);
 
+void Enemy::Fire() {
+	
 	// 弾の速度
 	float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
-	Vector3 p = player_->GetWorldPosition();
-	Vector3 e = GetWorldPosition();
-
-	Vector3 distance = Subtract(player_->GetWorldPosition(), GetWorldPosition());
-	Vector3 distanceNolm = Normalize(distance);
-	velocity = Multiply(kBulletSpeed, distanceNolm);
 	// 速度のベクトルを自機の向きに合わせて回転させる
-	//velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
-
-	//GetWorldPosition();
-	//player_->GetWorldPosition();
+	velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
 
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-	gameScene_->AddEnemyBullet(newBullet);
 
-	//bullets_.push_back(newBullet);
+	bullets_.push_back(newBullet);
 
 }
 
@@ -145,20 +168,48 @@ Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
-void Enemy::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
-	//for (EnemyBullet* bullet : bullets_) {
-	//	    bullet->Draw(viewProjection);
-	//}
+
+#pragma region 描画
+void Enemy::Draw(const ViewProjection& viewProjection) {
+	if (isDead_ == false) {
+
+		 model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	}
+}
+#pragma endregion
+
+
+#pragma region 当たり判定
+void Enemy::OnCollision() { 
+	
+	//isDead_ = true; 
+	Hp = Hp - 1;
+
+	if (Hp <= 0) {
+
+		 isDead_ = true;
+	
+	}
 }
 
-void Enemy::OnCollision() { isDead_ = true; }
+void Enemy::BoxCollision() { 
+	
+	//Hp = Hp - 5;
+	//
+	//if (Hp <= 0) {
+	//
+	//	 isDead_ = true;
+	//}
+	isBoxAttack = true;
+
+}
+#pragma endregion
 
 
 Enemy::~Enemy() {
 
-	//for (EnemyBullet* bullet : bullets_) {
-	//	    delete bullet;
-	//}
+	for (EnemyBullet* bullet : bullets_) {
+		    delete bullet;
+	}
 }

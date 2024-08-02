@@ -27,6 +27,8 @@ Vector3 PlayerBullet::GetWorldPosition() {
 
 	return worldPos;
 }
+
+
 void PlayerBullet::Update() { 
 	
 	worldTransform_.translation_.x += velocity_.x;
@@ -36,7 +38,7 @@ void PlayerBullet::Update() {
 
 	//時間経過でデス
 	if (--deathTimer_ <= 0) {
-		isDead_ = true;
+		//isDead_ = true;
 	}
 }
 

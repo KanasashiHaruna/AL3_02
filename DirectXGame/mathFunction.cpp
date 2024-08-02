@@ -232,6 +232,7 @@ Matrix4x4 MakeViewportMatrix(
 
 	return result;
 }
+
 // 平行移動行列------------------------------------------
 Matrix4x4 MakeTranslateMatrixEx(const Vector3& translate) {
 	Matrix4x4 result;

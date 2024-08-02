@@ -3,11 +3,8 @@
 #include "WorldTransform.h"
 #include "Input.h"
 #include "EnemyBullet.h"
-#include <list>
 #include "mathFunction.h"
 
-class Player;
-class GameScene;
 
 class Enemy {
 public:
@@ -16,18 +13,14 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	void Fire();
 	void Approach();
+	void SetParent(const WorldTransform* parent);
 	
 	
 	Vector3 GetWorldPosition();
 	void OnCollision();  //当たり判定
+	void BoxCollision();
 
 	~Enemy();
-
-	Player* player_ = nullptr;
-	void SetPlayer(Player* player) { player_ = player; }
-
-	GameScene* gameScene_ = nullptr;
-	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -43,26 +36,34 @@ public:
 	Vector3 LeaveVelocity_;
 
 	enum class Phase {
-		Approach,    //接近
-		Leave,       //離脱
+		Move,
+		Attack,
+		Stop,
 	};
 
-	Phase phase_ = Phase::Approach;
+	Phase phase_ = Phase::Move;
 	
 	//弾
-	//std::list<EnemyBullet*> bullets_;
+	std::list<EnemyBullet*> bullets_;
 	
 	public:
 	static const int kFireInterval = 60;
+	    float Hp = 100;
 
 	private:
 	int32_t fireTimer = 0;
+	int32_t attackTime = 0;
+	int32_t stopTime = 0;
 
 	public:
-	    //const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	    const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 	    
-		// デスフラグ
+	//フラグ
 	    bool isDead_ = false;
+	    bool isAction = false;
+	    bool isStop = false;
+	    bool isBoxAttack = false;
+	
 
 	public:
 	    bool IsDead() const { return isDead_; }

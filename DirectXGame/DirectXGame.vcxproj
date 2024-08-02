@@ -114,10 +114,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mathFunction.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBox.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="RaikCamera.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Skydome.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,10 +156,12 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerBox.h" />
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="RaikCamera.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Skydome.h" />
+    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">

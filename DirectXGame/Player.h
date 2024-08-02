@@ -5,6 +5,7 @@
 #include "PlayerBullet.h"
 #include <list>
 #include "Sprite.h"
+#include "PlayerBox.h"
 
 
 class Player {
@@ -14,6 +15,7 @@ public:
 	void Draw(ViewProjection& vewProjection);
 	Vector3 Add(const Vector3& v1, const Vector3& v2);
 	void Attack();
+	void BoxAttack();
 	Vector3 GetWorldPosition();
 	Vector3 GetWorldPosition1();
 	void OnCollision();   //当たり判定
@@ -36,9 +38,11 @@ private:
 	// キー入力
 	Input* input_ = nullptr;
 
-	// 弾
+	// 弾----------------------------------------
 	//PlayerBullet* bullet_ = nullptr;
 	std::list<PlayerBullet*> bullets_;
+
+	std::list<PlayerBox*> boxBullets_;
 
 	//3Dレティクル用ワールドトランスフォーム
 	WorldTransform worldTransform3DReticle_;
@@ -46,7 +50,10 @@ private:
 	//2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
 
+	int32_t fireTimer = 0;
+	static const int kFireInterval = 10;
 	public:
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+    const std::list<PlayerBox*>& GetBoxs() const { return boxBullets_; }
 	
 };
