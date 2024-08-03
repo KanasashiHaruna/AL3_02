@@ -104,6 +104,10 @@ private: // メンバ変数---------------------------------
 	RaikCamera* railCamera_ = nullptr;
 	Vector3 railCameraPosition = {0, 0, -100};
 	Vector3 railCameraRotate = {0, 0, 0};
+
+	//終了フラグ
+	bool finished_ = false;
+	bool IsFinished() const { return finished_; }
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

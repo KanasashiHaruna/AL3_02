@@ -8,6 +8,17 @@
 #include "WinApp.h"
 #include "TitleScene.h"
 
+enum class Scene {
+	kUnknown = 0,
+
+	kTitle,
+	kGame,
+};
+
+Scene scene = Scene::kUnknown;
+
+
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* win = nullptr;
@@ -19,12 +30,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
 	TitleScene* titleScene = nullptr;
-	//titleScene = new TitleScene;
-	//titleScene->Initialize();
-	//titleScene->Update();
-	//titleScene->Draw();
-	
 
+	scene = Scene::kTitle;
+	titleScene = new TitleScene;
+	titleScene->Initialize();
+	titleScene->Update();
+	titleScene->Draw();
+
+	
+	delete titleScene;
+	
+	//void ChangeScene();
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"LD2B_03_カナサシ_ハルナ_AL3");
@@ -76,6 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
+		
 		// ImGui受付開始
 		imguiManager->Begin();
 		// 入力関連の毎フレーム処理
@@ -115,3 +132,4 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	return 0;
 }
+
