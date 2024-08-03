@@ -19,10 +19,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
 	TitleScene* titleScene = nullptr;
-	titleScene = new TitleScene;
-	titleScene->Initialize();
-	titleScene->Update();
-	titleScene->Draw();
+	//titleScene = new TitleScene;
+	//titleScene->Initialize();
+	//titleScene->Update();
+	//titleScene->Draw();
 	
 
 	// ゲームウィンドウの作成
