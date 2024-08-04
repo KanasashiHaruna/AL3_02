@@ -50,7 +50,7 @@ void GameScene::Initialize() {
 	enemy_ = new Enemy();
 
     // 敵キャラに自キャラのアドレスを渡す
-	//enemy_->SetPlayer(player_);
+	enemy_->SetPlayer(player_);
 	enemy_->Initialize(model_, position_, velocity_, velocity2_);
     #pragma endregion
 	

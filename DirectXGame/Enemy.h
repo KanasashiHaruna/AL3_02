@@ -3,7 +3,10 @@
 #include "WorldTransform.h"
 #include "Input.h"
 #include "EnemyBullet.h"
+
 #include "mathFunction.h"
+
+class Player;
 
 
 class Enemy {
@@ -22,6 +25,8 @@ public:
 
 	~Enemy();
 	
+	Player* player_ = nullptr;
+	void SetPlayer(Player* player) { player_ = player; }
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 
@@ -44,7 +49,7 @@ public:
 	Phase phase_ = Phase::Move;
 	
 	//弾
-	std::list<EnemyBullet*> bullets_;
+	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 	
 	public:
 	static const int kFireInterval = 60;
@@ -56,9 +61,10 @@ public:
 	int32_t stopTime = 0;
 
 	public:
-	    const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
-	    
-	//フラグ
+	std::list<EnemyBullet*> bullets_;
+	
+	
+	// フラグ
 	    bool isDead_ = false;
 	    bool isAction = false;
 	    bool isStop = false;
@@ -67,5 +73,6 @@ public:
 
 	public:
 	    bool IsDead() const { return isDead_; }
+
 };
 

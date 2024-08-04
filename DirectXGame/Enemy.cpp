@@ -79,23 +79,28 @@ void Enemy::Update() {
 		case Phase::Move:
 	default:
 		    isStop = false;
-		    worldTransform_.translation_.z += -0.1f;
+		    //worldTransform_.translation_.x += ApprochVelocity_.x;
+		    //worldTransform_.translation_.y += ApprochVelocity_.y;
+		    //worldTransform_.translation_.z += -0.1f;
 	
-
-			//fireTimer--;
-		    //if (fireTimer <= 0) {
-			//    Fire();
-			//    fireTimer = kFireInterval;
+			worldTransform_.UpdateMatrix();
+			fireTimer--;
+		    if (fireTimer <= 0) {
+			    Fire();
+			    fireTimer = kFireInterval;
+			}
+		    for (EnemyBullet* bullet : bullets_) {
+			    bullet->Update();
+		    }
+		    //attackTime++;
+		    //if (attackTime >= 150) {
+			//    isAction = true;
 			//}
-		    attackTime++;
-		    if (attackTime >= 150) {
-			    isAction = true;
-			}
-
-			if (isAction == true) {
-			    phase_ = Phase::Attack;
-			    attackTime = 0;
-			}
+			//
+			//if (isAction == true) {
+			//    phase_ = Phase::Attack;
+			//    attackTime = 0;
+			//}
 
 		    break;
 	case Phase::Attack:
@@ -149,6 +154,10 @@ void Enemy::Fire() {
 	float kBulletSpeed = 0.5f;
 	Vector3 velocity(0, 0, kBulletSpeed);
 
+	Vector3 distance = Subtract(player_->GetWorldPosition(), GetWorldPosition());
+	Vector3 distanceNolm = Normalize(distance);
+	velocity = Multiply(kBulletSpeed, distanceNolm);
+
 	// 速度のベクトルを自機の向きに合わせて回転させる
 	velocity = TransformNomal2(velocity, worldTransform_.matWorld_);
 
@@ -175,6 +184,10 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 	if (isDead_ == false) {
 
 		 model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	}
+
+	for (EnemyBullet* bullet : bullets_) {
+		 bullet->Draw(viewProjection);
 	}
 }
 #pragma endregion

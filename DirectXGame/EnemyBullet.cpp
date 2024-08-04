@@ -3,6 +3,7 @@
 #include "TextureManager.h"
 #include "WorldTransform.h"
 
+
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
 	model_ = model;
@@ -29,15 +30,17 @@ Vector3 EnemyBullet::GetWorldPosition() {
 
 void EnemyBullet::Update() {
 
-	worldTransform_.translation_.x -= velocity_.x;
-	worldTransform_.translation_.y -= velocity_.y;
-	worldTransform_.translation_.z -= velocity_.z;
+	worldTransform_.translation_.x += velocity_.x;
+	worldTransform_.translation_.y += velocity_.y;
+	worldTransform_.translation_.z -= 1.0f;
 	worldTransform_.UpdateMatrix();
 
 	// 時間経過でデス
-	if (--deathTimer_ <= 0) {
-		isDead_ = true;
-	}
+	//if (--deathTimer_ <= 0) {
+		//isDead_ = true;
+	//}
+
+	
 }
 
 void EnemyBullet::OnCollision() { isDead_ = true; }

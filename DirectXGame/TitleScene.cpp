@@ -8,7 +8,7 @@ void TitleScene::Initialize() {
 
 void TitleScene::Update() {
 
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+	if (Input::GetInstance()->PushKey(DIK_T)) {
 		finished_ = true;
 	}
 }
