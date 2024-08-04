@@ -192,22 +192,22 @@ void Player::Update(
 
 	//自機のワールド座標から3Dレティクルのワールド座標を計算
 	//自機から3Dレティクルへの距離
-	const float kDistancePlayerTo3DReticle = 50.0f;
+	//const float kDistancePlayerTo3DReticle = 50.0f;
 	//自機から3Dレティクルへのオフセット(ｚ+向き)
-	Vector3 offset = {0, 0, 1.0f};
+	//Vector3 offset = {0, 0, 1.0f};
 	//自機のワールド行列の回転を反映
-	offset = TransformNomal(offset, worldTransform_.matWorld_);
+	//offset = TransformNomal(offset, worldTransform_.matWorld_);
 	//ベクトルの長さを整える
-	offset = Normalize1(offset);
-	offset = Multiply(kDistancePlayerTo3DReticle, offset);
+	//offset = Normalize1(offset);
+	//offset = Multiply(kDistancePlayerTo3DReticle, offset);
 	//3Dレティクルの座標を設定
-	worldTransform3DReticle_.translation_ = Add(offset, GetWorldPosition());
+	//worldTransform3DReticle_.translation_ = Add(offset, GetWorldPosition());
 	
 
 	//--------------------------------------------------------------
 	
 	//3Dレティクルのワールド座標から2Dレティクルのスクリーンを座標計算
-	Vector3 positionReticle = GetWorldPosition1();
+	//Vector3 positionReticle = GetWorldPosition1();
 
 	//ビューポート行列
 	//Matrix4x4 matViewport =
@@ -266,7 +266,7 @@ void Player::Update(
 	worldTransform3DReticle_.TransferMatrix();
 	
 	// スプライトのレティクルに座標設定
-	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+	//sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 
 
 	//ゲームパッドの状態を得る変数
@@ -300,25 +300,6 @@ void Player::Update(
 		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
 	}
 
-	
-	//if (input_->PushKey(DIK_LEFT)) {
-	//	move.x -= kCharacterSpeed;
-	//} else if (input_->PushKey(DIK_RIGHT)) {
-	//	move.x += kCharacterSpeed;
-	//}
-	//
-	//// 押した方向で移動ベクトルを変更
-	//if (input_->PushKey(DIK_DOWN)) {
-	//	move.y -= kCharacterSpeed;
-	//} else if (input_->PushKey(DIK_UP)) {
-	//	move.y += kCharacterSpeed;
-	//}
-	//
-	//// ゲームパッド状態取得
-	//if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-	//	move.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * kCharacterSpeed;
-	//	move.y -= (float)joyState.Gamepad.sThumbRX / SHRT_MAX * kCharacterSpeed;
-	//}
 
 	//
 	// 座標移動(ベクトルの加算)
@@ -327,7 +308,7 @@ void Player::Update(
 	// 座標の画面表示-------------------
 
 	ImGui::Begin("Player");
-	ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
+	//ImGui::Text("2DReticle:(%f,%f)", positionReticle.x, positionReticle.y);
 	//ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
 	//ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
 	ImGui::Text(
